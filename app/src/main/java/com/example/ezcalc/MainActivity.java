@@ -14,7 +14,7 @@ import com.google.android.material.button.MaterialButton;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
-import java.util.Stack;
+
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MaterialButton buttonDivide, buttonMultiply, buttonMinus, buttonAdd, buttonEquals;
     MaterialButton button1,button2,button3,button4,button5,button6,button7,button8,button9,button0;
     MaterialButton buttonAC, buttonDot;
+
 
 
 
@@ -41,39 +42,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         resultTv = findViewById(R.id.result_tv);
         solutionTv = findViewById(R.id.solution_tv);
 
-        assignId(buttonC, R.id.button_c);
-        assignId(buttonBracesOpen, R.id.button_open_bracket);
-        assignId(buttonBracesClose, R.id.button_closed_bracket);
-        assignId(buttonDivide, R.id.button_divide);
-        assignId(buttonMultiply, R.id.button_multiply);
-        assignId(buttonMinus, R.id.button_minus);
-        assignId(buttonAdd, R.id.button_add);
-        assignId(buttonEquals, R.id.button_equal);
-        assignId(button1, R.id.button_1);
-        assignId(button2, R.id.button_2);
-        assignId(button3, R.id.button_3);
-        assignId(button4, R.id.button_4);
-        assignId(button5, R.id.button_5);
-        assignId(button6, R.id.button_6);
-        assignId(button7, R.id.button_7);
-        assignId(button8, R.id.button_8);
-        assignId(button9, R.id.button_9);
-        assignId(button0, R.id.button_0);
-        assignId(buttonAC, R.id.button_ac);
-        assignId(buttonDot, R.id.button_dot);
+
+        buttonC = assignId(R.id.button_c);
+        buttonBracesOpen =assignId(R.id.button_open_bracket);
+        buttonBracesClose = assignId(R.id.button_closed_bracket);
+        buttonDivide = assignId(R.id.button_divide);
+        buttonMultiply =assignId(R.id.button_multiply);
+        buttonMinus = assignId(R.id.button_minus);
+        buttonAdd = assignId(R.id.button_add);
+        buttonEquals = assignId(R.id.button_equal);
+        button1 = assignId(R.id.button_1);
+        button2 = assignId(R.id.button_2);
+        button3 =assignId(R.id.button_3);
+        button4 = assignId(R.id.button_4);
+        button5 = assignId(R.id.button_5);
+        button6 = assignId(R.id.button_6);
+        button7 = assignId(R.id.button_7);
+        button8 = assignId(R.id.button_8);
+        button9 = assignId(R.id.button_9);
+        button0 = assignId(R.id.button_0);
+        buttonAC = assignId(R.id.button_ac);
+        buttonDot = assignId(R.id.button_dot);
 
     }
 
-    public void assignId(MaterialButton btn, int id) {
-        btn = findViewById(id);
+    public MaterialButton assignId(int id) {
+        MaterialButton btn = findViewById(id);
         btn.setOnClickListener(this);
+        return btn;
     }
 
     @Override
     public void onClick(View v) {
+        //Ep kieu sang dang btn
         MaterialButton btn = (MaterialButton) v;
         String buttonText = btn.getText().toString();
+
         String datatocalculate = solutionTv.getText().toString();
+
         if (buttonText.equals("AC")){
             solutionTv.setText("");
             resultTv.setText("0");
@@ -87,6 +93,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(!datatocalculate.isEmpty()){
                 datatocalculate = datatocalculate.substring(0,datatocalculate.length()-1);
             }
+
+            //Tranh bi loi undefined
+            if (datatocalculate.isEmpty()){
+                datatocalculate = "0";
+            }
+            solutionTv.setText(datatocalculate);
+            return;
+
         } else {
             if (datatocalculate.equals("0") && !buttonText.equals(".")) {
                 datatocalculate = buttonText;
@@ -108,12 +122,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onPointerCaptureChanged(hasCapture);
     }
 
+    //hàm tính toán
     public String getResult(String data){
         try {
+            //Initial JS environment
             Context context = Context.enter();
+
+            //Tat toi uu hoa
             context.setOptimizationLevel(-1);
             Scriptable scriptable = context.initStandardObjects();
+
+            //Tinh toan va convert ve to string
             String finalResults = context.evaluateString(scriptable, data, "Javascript", 1, null).toString();
+
+            //Trim duoi neu ket thuc bang .0
             if (finalResults.endsWith(".0")){
                 finalResults = finalResults.replace(".0","");
             }
